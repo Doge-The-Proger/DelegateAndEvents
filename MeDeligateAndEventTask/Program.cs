@@ -23,6 +23,6 @@ var directory = Console.ReadLine();
 Console.Write("Введите патерн поиска файла или его полное имя - ");
 var pattern = Console.ReadLine();
 
-publisher.ScanDirecory(directory, pattern);
+publisher.ScanDirectory(directory, pattern);
 
 

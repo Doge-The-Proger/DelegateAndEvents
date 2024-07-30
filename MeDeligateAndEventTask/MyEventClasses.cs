@@ -8,10 +8,10 @@ namespace MeDeligateAndEventTask
 {
     public class MyEventClassPublisher
     {
-        public delegate void MyEventHandler (object sender, FileArgs e);
+        public delegate bool MyEventHandler (object sender, FileArgs e);
         public event MyEventHandler? MyEvent;
 
-        public void ScanDirecory(string directory, string fileName)
+        public void ScanDirectory(string directory, string fileName)
         {
             try
             {
@@ -19,10 +19,9 @@ namespace MeDeligateAndEventTask
 
                 foreach (var file in allFiles)
                 {
-                    MyEvent?.Invoke(this, new FileArgs(directory, file));
-                    var isContinue = Console.ReadLine();
-
-                    if (isContinue.ToLower() == "n")
+					IAsyncResult? resultObj = MyEvent?.BeginInvoke(this, new FileArgs(directory, file), null, null);
+					bool? result = MyEvent?.EndInvoke(resultObj);
+					if (result.GetValueOrDefault())
                         break;
                 }
             }
@@ -37,10 +36,11 @@ namespace MeDeligateAndEventTask
 
     public class MyEventClassSubscriber
     {
-        public void DisplayMessage(object sender, FileArgs args)
+        public bool DisplayMessage(object sender, FileArgs args)
         {
             Console.WriteLine($"\nВ директории ({args.Directory}) найден файл - ({args.FileName})");
             Console.WriteLine("Продолжить поиск? (N - нет)");
-        }
+            return Console.ReadLine()?.ToLower() == "n";
+		}
     }
 }
